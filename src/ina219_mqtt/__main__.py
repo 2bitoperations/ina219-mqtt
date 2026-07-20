@@ -77,8 +77,8 @@ def main() -> int:
         discovery_prefix=args.mqtt_discovery_prefix,
         state_prefix=args.mqtt_state_prefix,
         client_id=args.mqtt_client_id,
-        username=args.mqtt_username or None,
-        password=args.mqtt_password or None,
+        username=args.mqtt_username.strip() or None,
+        password=args.mqtt_password.strip() or None,
     )
 
     stop = False

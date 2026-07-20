@@ -77,8 +77,8 @@ INA219_MIN_CHARGING_CURRENT=55
 # Poll interval in seconds
 INA219_SCAN_INTERVAL=30
 
-# Device name shown in HA (defaults to hostname)
-# INA219_DEVICE_NAME="Barn UPS"
+# Device name shown in HA
+INA219_DEVICE_NAME="$(hostname) UPS"
 EOF
 else
     echo "Config already exists: $CONFIG_FILE (skipping)"
@@ -96,23 +96,23 @@ User=root
 WorkingDirectory=$INSTALL_DIR
 EnvironmentFile=$CONFIG_FILE
 ExecStart=$INSTALL_DIR/.venv/bin/python -m ina219_mqtt \
-    --mqtt-broker "\${INA219_MQTT_BROKER}" \
-    --mqtt-port "\${INA219_MQTT_PORT}" \
-    --mqtt-username "\${INA219_MQTT_USERNAME}" \
-    --mqtt-password "\${INA219_MQTT_PASSWORD}" \
-    --mqtt-client-id "\${INA219_MQTT_CLIENT_ID}" \
-    --mqtt-discovery-prefix "\${INA219_MQTT_DISCOVERY_PREFIX}" \
-    --mqtt-state-prefix "\${INA219_MQTT_STATE_PREFIX}" \
-    --i2c-bus "\${INA219_I2C_BUS}" \
-    --i2c-addr "\${INA219_I2C_ADDR}" \
-    --batteries-count "\${INA219_BATTERIES_COUNT}" \
-    --battery-capacity "\${INA219_BATTERY_CAPACITY}" \
-    --max-soc "\${INA219_MAX_SOC}" \
-    --sma-samples "\${INA219_SMA_SAMPLES}" \
-    --min-online-current "\${INA219_MIN_ONLINE_CURRENT}" \
-    --min-charging-current "\${INA219_MIN_CHARGING_CURRENT}" \
-    --scan-interval "\${INA219_SCAN_INTERVAL}" \
-    \${INA219_DEVICE_NAME:+--device-name "\${INA219_DEVICE_NAME}"}
+    --mqtt-broker \${INA219_MQTT_BROKER} \
+    --mqtt-port \${INA219_MQTT_PORT} \
+    --mqtt-username \${INA219_MQTT_USERNAME} \
+    --mqtt-password \${INA219_MQTT_PASSWORD} \
+    --mqtt-client-id \${INA219_MQTT_CLIENT_ID} \
+    --mqtt-discovery-prefix \${INA219_MQTT_DISCOVERY_PREFIX} \
+    --mqtt-state-prefix \${INA219_MQTT_STATE_PREFIX} \
+    --i2c-bus \${INA219_I2C_BUS} \
+    --i2c-addr \${INA219_I2C_ADDR} \
+    --batteries-count \${INA219_BATTERIES_COUNT} \
+    --battery-capacity \${INA219_BATTERY_CAPACITY} \
+    --max-soc \${INA219_MAX_SOC} \
+    --sma-samples \${INA219_SMA_SAMPLES} \
+    --min-online-current \${INA219_MIN_ONLINE_CURRENT} \
+    --min-charging-current \${INA219_MIN_CHARGING_CURRENT} \
+    --scan-interval \${INA219_SCAN_INTERVAL} \
+    --device-name \${INA219_DEVICE_NAME}
 Restart=always
 RestartSec=10
 
