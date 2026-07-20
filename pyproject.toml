@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ina219-mqtt"
+version = "0.1.0"
+description = "INA219 UPS Hat → MQTT bridge with Home Assistant autodiscovery"
+requires-python = ">=3.11"
+dependencies = [
+    "smbus2>=0.6.0",
+    "paho-mqtt~=2.1",
+]
+
+[project.scripts]
+ina219-mqtt = "ina219_mqtt.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ina219_mqtt"]
