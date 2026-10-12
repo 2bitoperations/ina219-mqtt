@@ -93,8 +93,6 @@ def main() -> int:
 
     try:
         publisher.connect()
-        time.sleep(1)  # let the MQTT connection establish
-        publisher.publish_discovery()
 
         while not stop:
             try:

@@ -53,6 +53,7 @@ class MQTTPublisher:
         self._client.will_set(self._availability_topic, payload="offline", retain=True)
         self._client.on_connect = self._on_connect
         self._client.on_disconnect = self._on_disconnect
+        self._client.on_message = self._on_message
 
     def connect(self) -> None:
         self._client.connect(self._broker, self._port)
@@ -123,10 +124,17 @@ class MQTTPublisher:
             logger.debug("Published state: %s", payload)
 
     def _on_connect(self, client, userdata, flags, reason_code, properties) -> None:
-        if reason_code == 0:
+        if not reason_code.is_failure:
             logger.info("Connected to MQTT broker at %s:%d", self._broker, self._port)
+            self.publish_discovery()
+            self._client.subscribe(f"{self._discovery_prefix}/status")
         else:
             logger.error("MQTT connect failed, reason_code=%s", reason_code)
 
     def _on_disconnect(self, client, userdata, flags, reason_code, properties) -> None:
         logger.info("Disconnected from MQTT broker")
+
+    def _on_message(self, client, userdata, msg) -> None:
+        if msg.topic == f"{self._discovery_prefix}/status" and msg.payload.decode() == "online":
+            logger.info("Received HA birth message, republishing discovery")
+            self.publish_discovery()
