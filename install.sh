@@ -73,6 +73,8 @@ INA219_MAX_SOC=91
 INA219_SMA_SAMPLES=5
 INA219_MIN_ONLINE_CURRENT=-100
 INA219_MIN_CHARGING_CURRENT=55
+# Set to 1 if the current reads positive while discharging (shunt wired the other way)
+INA219_INVERT_CURRENT=0
 
 # Poll interval in seconds
 INA219_SCAN_INTERVAL=30

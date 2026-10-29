@@ -19,6 +19,7 @@ class INA219Reader:
         sma_samples: int = 5,
         min_online_current: float = -100,
         min_charging_current: float = 55,
+        invert_current: bool = False,
     ) -> None:
         INA219 = get_ina219_class()
         ina219 = INA219(i2c_bus=bus, addr=addr)
@@ -29,6 +30,9 @@ class INA219Reader:
         self._max_soc = max_soc
         self._min_online_current = min_online_current
         self._min_charging_current = min_charging_current
+        # Some HATs wire the shunt the other way round, so discharging reads positive.
+        # Flip the current so that positive always means charging.
+        self._current_sign = -1 if invert_current else 1
 
     def read(self) -> dict:
         w = self._wrapper
@@ -37,10 +41,10 @@ class INA219Reader:
         bus_voltage = w.getBusVoltageSMA_V()
         shunt_voltage = w.getShuntVoltageSMA_mV() / 1000
         total_voltage = bus_voltage + shunt_voltage
-        current_ma = w.getCurrentSMA_mA()
+        current_ma = w.getCurrentSMA_mA() * self._current_sign
 
         smooth_bus_voltage = w.getBusVoltageSMAx2_V()
-        smooth_current_ma = w.getCurrentSMAx2_mA()
+        smooth_current_ma = w.getCurrentSMAx2_mA() * self._current_sign
 
         cell_voltage = smooth_bus_voltage / self._batteries_count
         soc = min(self._soc_provider.get_soc_from_voltage(cell_voltage), self._max_soc)

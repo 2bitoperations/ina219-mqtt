@@ -22,6 +22,10 @@ def _env_float(key: str, default: float) -> float:
     return float(os.environ.get(key, default))
 
 
+def _env_bool(key: str, default: bool) -> bool:
+    return os.environ.get(key, str(default)).strip().lower() in ("1", "true", "yes", "on")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="INA219 UPS Hat → MQTT bridge")
     parser.add_argument("-v", "--verbose", action="count", default=0)
@@ -41,6 +45,7 @@ def main() -> int:
     parser.add_argument("--sma-samples",        type=int, default=_env_int("INA219_SMA_SAMPLES", 5))
     parser.add_argument("--min-online-current", type=float, default=_env_float("INA219_MIN_ONLINE_CURRENT", -100))
     parser.add_argument("--min-charging-current", type=float, default=_env_float("INA219_MIN_CHARGING_CURRENT", 55))
+    parser.add_argument("--invert-current",     action=argparse.BooleanOptionalAction, default=_env_bool("INA219_INVERT_CURRENT", False))
     parser.add_argument("--scan-interval",      type=int, default=_env_int("INA219_SCAN_INTERVAL", 30))
     args = parser.parse_args()
 
@@ -51,8 +56,8 @@ def main() -> int:
     device_id = (args.device_name or hostname).lower().replace(" ", "_").replace("-", "_")
     device_name = args.device_name or f"{hostname} UPS"
 
-    logger.warning("Starting ina219-mqtt: device=%s bus=%d addr=0x%02x interval=%ds",
-                   device_name, args.i2c_bus, args.i2c_addr, args.scan_interval)
+    logger.warning("Starting ina219-mqtt: device=%s bus=%d addr=0x%02x interval=%ds invert_current=%s",
+                   device_name, args.i2c_bus, args.i2c_addr, args.scan_interval, args.invert_current)
 
     try:
         reader = INA219Reader(
@@ -64,6 +69,7 @@ def main() -> int:
             sma_samples=args.sma_samples,
             min_online_current=args.min_online_current,
             min_charging_current=args.min_charging_current,
+            invert_current=args.invert_current,
         )
     except Exception as e:
         logger.error("Failed to initialize INA219: %s", e)
