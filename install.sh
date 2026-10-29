@@ -26,7 +26,7 @@ UV_BIN=$(command -v uv || echo "/root/.local/bin/uv")
 if [ "$1" == "--update" ]; then
     echo "Updating ina219-mqtt from git..."
     if [ -d ".git" ]; then
-        [ -n "$SUDO_USER" ] && sudo -u "$SUDO_USER" git pull origin master || git pull origin master
+        [ -n "$SUDO_USER" ] && sudo -u "$SUDO_USER" git pull origin main || git pull origin main
     else
         echo "Error: Not a git repository."
         exit 1
